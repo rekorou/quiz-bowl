@@ -1,3 +1,45 @@
+# Quiz Bowl
+
+A multiplayer quiz game built with React 19, Vite 7, and Tailwind CSS.
+
+## Project Structure
+
+```
+src/
+├── App.jsx              # Main app (thin orchestrator)
+├── App.css              # Global styles
+├── main.jsx
+├── index.css
+├── constants/
+│   └── config.js        # Lobby code, room code, timing, max score
+├── data/
+│   └── questionBank.js  # Rounds and questions
+├── hooks/
+│   └── useGameState.js  # Game logic and state
+└── components/
+    ├── AppHeader.jsx
+    ├── index.js
+    └── screens/
+        ├── WelcomeScreen.jsx
+        ├── LobbyScreen.jsx
+        ├── RoundIntroScreen.jsx
+        ├── SuddenDeathIntroScreen.jsx
+        ├── QuestionScreen.jsx
+        ├── CorrectAnswerScreen.jsx
+        ├── LeaderboardScreen.jsx
+        ├── MatchCompleteScreen.jsx
+        └── index.js
+```
+
+### Key Files
+
+- **config.js** – Change `VALID_LOBBY_CODE`, `ROOM_DISPLAY_CODE`, timing constants
+- **questionBank.js** – Add or edit rounds and questions
+- **useGameState.js** – All game logic (rounds, scoring, transitions)
+- **screens/** – Each screen is a separate component for easier maintenance
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

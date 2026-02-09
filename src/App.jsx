@@ -1,34 +1,98 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useGameState } from './hooks/useGameState'
+import { AppHeader } from './components/AppHeader'
+import {
+  WelcomeScreen,
+  LobbyScreen,
+  RoundIntroScreen,
+  SuddenDeathIntroScreen,
+  QuestionScreen,
+  CorrectAnswerScreen,
+  LeaderboardScreen,
+  MatchCompleteScreen,
+} from './components/screens'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const {
+    name,
+    handleNameChange,
+    code,
+    setCode,
+    error,
+    setError,
+    handleJoinSubmit,
+    inLobby,
+    isReady,
+    countdown,
+    handleToggleReady,
+    showRoundIntro,
+    showSuddenDeathIntro,
+    round,
+    roundQuestions,
+    currentQuestionIndex,
+    hasStartedQuestions,
+    currentQuestion,
+    showingAnswer,
+    questionTimeLeft,
+    selectedOptionIndex,
+    handleSelectOption,
+    showLeaderboard,
+    showMatchComplete,
+    animatedScores,
+  } = useGameState()
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />c
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app-root">
+      <div className="app-frame">
+        <AppHeader />
+
+        {showSuddenDeathIntro ? (
+          <SuddenDeathIntroScreen />
+        ) : showMatchComplete ? (
+          <MatchCompleteScreen />
+        ) : showLeaderboard ? (
+          <LeaderboardScreen animatedScores={animatedScores} />
+        ) : showingAnswer && hasStartedQuestions && currentQuestion ? (
+          <CorrectAnswerScreen question={currentQuestion} />
+        ) : hasStartedQuestions && currentQuestion ? (
+          <QuestionScreen
+            question={currentQuestion}
+            round={round}
+            roundQuestions={roundQuestions}
+            questionIndex={currentQuestionIndex}
+            questionTimeLeft={questionTimeLeft}
+            selectedOptionIndex={selectedOptionIndex}
+            showingAnswer={showingAnswer}
+            onSelectOption={handleSelectOption}
+          />
+        ) : showRoundIntro ? (
+          <RoundIntroScreen round={round} />
+        ) : inLobby ? (
+          <LobbyScreen
+            name={name}
+            isReady={isReady}
+            countdown={countdown}
+            onToggleReady={handleToggleReady}
+          />
+        ) : (
+          <WelcomeScreen
+            name={name}
+            code={code}
+            error={error}
+            onNameChange={(value) => {
+              handleNameChange(value)
+              if (error) setError('')
+            }}
+            onCodeChange={(value) => {
+              setCode(value)
+              if (error) setError('')
+            }}
+            onSubmit={handleJoinSubmit}
+            onErrorClear={() => setError('')}
+          />
+        )}
       </div>
-      <h1 className='text-red-500'>Vites + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
