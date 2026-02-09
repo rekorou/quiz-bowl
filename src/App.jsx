@@ -38,7 +38,10 @@ function App() {
     handleSelectOption,
     showLeaderboard,
     showMatchComplete,
+    isFinalLeaderboard,
+    leaderboardEntries,
     animatedScores,
+    handleExitToWelcome,
   } = useGameState()
 
   return (
@@ -51,7 +54,11 @@ function App() {
         ) : showMatchComplete ? (
           <MatchCompleteScreen />
         ) : showLeaderboard ? (
-          <LeaderboardScreen animatedScores={animatedScores} />
+          <LeaderboardScreen
+            animatedScores={isFinalLeaderboard ? leaderboardEntries : animatedScores}
+            isFinalLeaderboard={isFinalLeaderboard}
+            onExit={handleExitToWelcome}
+          />
         ) : showingAnswer && hasStartedQuestions && currentQuestion ? (
           <CorrectAnswerScreen question={currentQuestion} />
         ) : hasStartedQuestions && currentQuestion ? (

@@ -31,6 +31,7 @@ export function useGameState() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [showMatchComplete, setShowMatchComplete] = useState(false)
   const [showSuddenDeathIntro, setShowSuddenDeathIntro] = useState(false)
+  const [isFinalLeaderboard, setIsFinalLeaderboard] = useState(false)
   const [animatedScores, setAnimatedScores] = useState([])
 
   const countdownRef = useRef(null)
@@ -73,7 +74,30 @@ export function useGameState() {
     setShowLeaderboard(false)
     setShowMatchComplete(false)
     setShowSuddenDeathIntro(false)
+    setIsFinalLeaderboard(false)
   }, [])
+
+  const handleExitToWelcome = useCallback(() => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current)
+      countdownRef.current = null
+    }
+    if (questionTimerRef.current) {
+      clearInterval(questionTimerRef.current)
+      questionTimerRef.current = null
+    }
+    if (leaderboardTimerRef.current) {
+      clearInterval(leaderboardTimerRef.current)
+      leaderboardTimerRef.current = null
+    }
+    setInLobby(false)
+    setCountdown(null)
+    setShowLeaderboard(false)
+    setShowMatchComplete(false)
+    setShowSuddenDeathIntro(false)
+    setIsFinalLeaderboard(false)
+    resetForNewGame()
+  }, [resetForNewGame])
 
   const startQuestion = useCallback(
     (index, roundIdOverride) => {
@@ -239,6 +263,8 @@ export function useGameState() {
   // After correct answer -> next question or transition
   useEffect(() => {
     if (!showingAnswer) return
+    // Skip when we've transitioned to a new round intro (avoids re-running with new round state)
+    if (showRoundIntro) return
 
     const timeoutId = setTimeout(() => {
       const nextIndex = currentQuestionIndex + 1
@@ -302,11 +328,14 @@ export function useGameState() {
         } else {
           setShowMatchComplete(true)
           setShowLeaderboard(false)
+          setIsFinalLeaderboard(false)
           setTimeout(() => {
             setShowMatchComplete(false)
             setShowLeaderboard(true)
+            setIsFinalLeaderboard(true)
             setTimeout(() => {
               if (hasTie) {
+                setIsFinalLeaderboard(false)
                 setShowLeaderboard(false)
                 setShowSuddenDeathIntro(true)
               }
@@ -319,6 +348,7 @@ export function useGameState() {
     return () => clearTimeout(timeoutId)
   }, [
     showingAnswer,
+    showRoundIntro,
     currentQuestionIndex,
     roundQuestions.length,
     currentRoundId,
@@ -409,7 +439,9 @@ export function useGameState() {
     // Leaderboard
     showLeaderboard,
     showMatchComplete,
+    isFinalLeaderboard,
     leaderboardEntries,
     animatedScores,
+    handleExitToWelcome,
   }
 }

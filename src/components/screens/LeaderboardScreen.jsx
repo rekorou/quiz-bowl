@@ -1,6 +1,6 @@
 import { MAX_POSSIBLE_SCORE } from '../../constants/config'
 
-export function LeaderboardScreen({ animatedScores }) {
+export function LeaderboardScreen({ animatedScores, isFinalLeaderboard, onExit }) {
   return (
     <main className="leaderboard-main">
       <section className="leaderboard-panel">
@@ -42,6 +42,18 @@ export function LeaderboardScreen({ animatedScores }) {
             })}
           </div>
         </div>
+
+        {isFinalLeaderboard && onExit && (
+          <div className="leaderboard-footer">
+            <button
+              type="button"
+              className="lobby-button"
+              onClick={onExit}
+            >
+              EXIT
+            </button>
+          </div>
+        )}
       </section>
     </main>
   )
